@@ -19,9 +19,7 @@ export const io = new Server(server, {
 })
 
 //Store online Users
-export const userSocketMap = {
-
-}; // {userId:socketId}
+export const userSocketMap = {}; // {userId:socketId}
 
 // Socket IO connection handler
 io.on("connection", (socket) => {

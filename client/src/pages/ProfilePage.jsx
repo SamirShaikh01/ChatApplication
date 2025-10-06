@@ -1,21 +1,32 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import assets from '../assets/assets'
+import { AuthContext } from '../context/AuthContext'
 
 function ProfilePage() {
+  const { authUser, updateProfile } = useContext(AuthContext)
   const [selectedImg, setSelectedImage] = useState(null)
   const navigate = useNavigate()
-  const [name, setName] = useState('Martin Johnson')
-  const [bio, setBio] = useState('Hi EveryOne, I am Using QuickChat')
+  const [name, setName] = useState(authUser?.fullName || '')
+  const [bio, setBio] = useState(authUser?.bio || '')
 
-  const handleSubmit = async()=>{
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    navigate('/')
+    const reader = new FileReader();
+    if (selectedImg) {
+      reader.readAsDataURL(selectedImg);
+      reader.onloadend = () => {
+        updateProfile({ fullName: name, bio, profilePic: reader.result });
+      };
+    } else {
+      await updateProfile({ fullName: name, bio });
+    }
+    navigate('/');
   }
   return (
     <div className='min-h-screen bg-cover bg-no-repeat flex items-center justify-center'>
       <div className='w-5/6 max-w-2xl backdrop-blur-2xl text-gray-300 border-2 border-gray-600 flex items-center justify-between max-sm:flex-col-reverse rounded-lg'>
-        <form className='flex flex-col gap-5 p-10 flex-1'>
+        <form onSubmit={handleSubmit} className='flex flex-col gap-5 p-10 flex-1'>
           <h3 className='text-lg'>Profile Details</h3>
           <label htmlFor="avatar" className='flex items-center gap-3 cursor-pointer'>
             <input onChange={(e) => setSelectedImage(e.target.files[0])} type="file" id='avatar' accept='.png, .jpg, .jpeg' hidden />
@@ -29,7 +40,7 @@ function ProfilePage() {
             Save
           </button>
         </form>
-        <img className='max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10' src={assets.logo_icon} alt="" />
+        <img className='max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10' src={authUser?.profilePic || assets.logo_icon} alt="" />
       </div>
     </div>
   )
