@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const { data } = await axios.post(`/api/auth/${state}`, credentials);
 
-            if (data.success) {
+            if (data) {
                 // setAuthUser(data.userData);
                 console.log(data.userData);
                 connectSocket(data.userData);
