@@ -6,9 +6,9 @@ import bcrypt from 'bcryptjs';
 // Signup new User
 export const signUp = async (req, res) => {
     const { fullname, email, password, bio } = req.body;
-    console.log(fullname, email, password, bio + "before");
+     
     try {
-        console.log(fullname, email, password, bio + "After");
+         
         if (!fullname) {
             console.log("Missing Full Name");
             return res.json({ success: false, message: "Full Name is required" });
@@ -46,7 +46,7 @@ export const signUp = async (req, res) => {
         })
         
         const token = generateToken(newUser._id)
-        console.log(token);
+        
         res.json({ success: true, userData: newUser, token, message: "Account Created Successfully" })
     } catch (error) {
         console.log(error.message);
@@ -58,13 +58,12 @@ export const signUp = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(email);
-        console.log(password);
+      
         const userData = await User.findOne({ email })
         if (!userData) {
             return res.status(400).json({ success: false, message: " userdata not found Invalid Credentials" });
         }
-        console.log("userdata"+userData);
+ 
         const isPasswordCorrect = await bcrypt.compare(password, userData.password);
         if (!isPasswordCorrect) {
             return res.status(400).json({ success: false, message: "Invalid Credentials" });
