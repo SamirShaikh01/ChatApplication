@@ -58,10 +58,12 @@ export const AuthProvider = ({ children }) => {
     // Login or Signup
     const login = async (state, credentials) => {
         try {
+            console.log(state);
+            console.log(credentials);
             const { data } = await axios.post(`/api/auth/${state}`, credentials);
 
             if (data) {
-                // setAuthUser(data.userData);
+                setAuthUser(data.userData);
                 console.log(data.userData);
                 connectSocket(data.userData);
                 axios.defaults.headers.common["token"] = data.token;
@@ -107,7 +109,7 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         if (token) {
-            setToken(storedToken); // update state
+            setToken(token); // update state
             axios.defaults.headers.common["token"] = token;
             checkAuth(); // only call after header is set
         }

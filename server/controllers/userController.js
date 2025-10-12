@@ -61,16 +61,19 @@ export const login = async (req, res) => {
         console.log(email);
         console.log(password);
         const userData = await User.findOne({ email })
-        console.log(userData);
+        if (!userData) {
+            return res.status(400).json({ success: false, message: " userdata not found Invalid Credentials" });
+        }
+        console.log("userdata"+userData);
         const isPasswordCorrect = await bcrypt.compare(password, userData.password);
         if (!isPasswordCorrect) {
-            return res.json({ success: false, message: "Invalid Credentials" });
+            return res.status(400).json({ success: false, message: "Invalid Credentials" });
         }
         const token = generateToken(userData._id)
         res.json({ success: true, userData, token, message: "Account Login Successfully" })
     } catch (error) {
         console.log(error.message);
-        res.json({ success: false, message: error.message })
+        res.status(500).json({ success: false, message: error.message })
     }
 }
 
