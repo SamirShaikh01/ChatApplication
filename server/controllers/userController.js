@@ -4,12 +4,31 @@ import User from "../models/User.js";
 import bcrypt from 'bcryptjs';
 
 // Signup new User
-export const signUp = async (req,res) => {
+export const signUp = async (req, res) => {
     const { fullname, email, password, bio } = req.body;
+    console.log(fullname, email, password, bio + "before");
     try {
-        if (!fullname || !email || !password || !bio) {
-            return res.json({ success: false, message: "Missing Any Detail" })
+        console.log(fullname, email, password, bio + "After");
+        if (!fullname) {
+            console.log("Missing Full Name");
+            return res.json({ success: false, message: "Full Name is required" });
         }
+
+        if (!email) {
+            console.log("Missing Email");
+            return res.json({ success: false, message: "Email is required" });
+        }
+
+        if (!password) {
+            console.log("Missing Password");
+            return res.json({ success: false, message: "Password is required" });
+        }
+
+        if (!bio) {
+            console.log("Missing Bio");
+            return res.json({ success: false, message: "Bio is required" });
+        }
+
 
         const user = await User.findOne({ email });
         if (user) {
@@ -17,6 +36,7 @@ export const signUp = async (req,res) => {
         }
 
         // this will create random string and this string will be hashed with original passowrd to make it encrypted
+        
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -24,9 +44,9 @@ export const signUp = async (req,res) => {
         const newUser = await User.create({
             fullname, email, password: hashedPassword, bio
         })
-
+        
         const token = generateToken(newUser._id)
-
+        console.log(token);
         res.json({ success: true, userData: newUser, token, message: "Account Created Successfully" })
     } catch (error) {
         console.log(error.message);
@@ -38,7 +58,10 @@ export const signUp = async (req,res) => {
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log(email);
+        console.log(password);
         const userData = await User.findOne({ email })
+        console.log(userData);
         const isPasswordCorrect = await bcrypt.compare(password, userData.password);
         if (!isPasswordCorrect) {
             return res.json({ success: false, message: "Invalid Credentials" });
