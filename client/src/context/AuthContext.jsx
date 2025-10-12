@@ -78,6 +78,7 @@ export const AuthProvider = ({ children }) => {
 
     // Logout
     const logout = () => {
+        console.log("logout context");
         localStorage.removeItem("token");
         setToken(null);
         setAuthUser(null);
@@ -91,7 +92,6 @@ export const AuthProvider = ({ children }) => {
 
     // Update profile function to handle user profile updates
     const updateProfile = async (body) => {
-        console.log("update context");
         try {
             const { data } = await axios.put("/api/auth/update-profile", body);
             if (data.success) {
