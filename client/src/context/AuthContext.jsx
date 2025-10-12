@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-// Connect socket
+    // Connect socket
     const connectSocket = (userData) => {
         if (!userData || socket?.connected) return;
 
@@ -58,23 +58,23 @@ export const AuthProvider = ({ children }) => {
     // Login or Signup
     const login = async (state, credentials) => {
         try {
-     
             const { data } = await axios.post(`/api/auth/${state}`, credentials);
 
-            if (data) {
+            if (data.success) {
                 setAuthUser(data.userData);
                 connectSocket(data.userData);
-                axios.defaults.headers.common["token"] = data.token;
+                setAuthHeader(data.token); // ✅ use helper
                 setToken(data.token);
-                localStorage.setItem("token", data.token);  // must use data.token
+                localStorage.setItem("token", data.token);
                 toast.success(data.message);
             } else {
-                toast.error(data.message+"Login function");
+                toast.error(data.message);
             }
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
         }
     };
+
 
     // Logout
     const logout = () => {
@@ -83,15 +83,15 @@ export const AuthProvider = ({ children }) => {
         setAuthUser(null);
         setOnlineUser([]);
         setAuthHeader(null);
-        axios.defaults.headers.common["token"] = null;
         toast.success("Logged out successfully");
         socket?.disconnect();
         setSocket(null);
-
     };
+
 
     // Update profile function to handle user profile updates
     const updateProfile = async (body) => {
+        console.log("update context");
         try {
             const { data } = await axios.put("/api/auth/update-profile", body);
             if (data.success) {
@@ -103,15 +103,15 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    
+
 
     useEffect(() => {
         if (token) {
-            setToken(token); // update state
-            axios.defaults.headers.common["token"] = token;
-            checkAuth(); // only call after header is set
+            setAuthHeader(token);
+            checkAuth();
         }
     }, []);
+
 
 
     const value = {

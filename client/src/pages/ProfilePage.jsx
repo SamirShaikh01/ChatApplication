@@ -9,13 +9,13 @@ function ProfilePage() {
   const { authUser, updateProfile } = useContext(AuthContext)
   const [selectedImg, setSelectedImage] = useState(null)
   const navigate = useNavigate()
-  const [name, setName] = useState(authUser?.fullName || 'MR. John Doe')
+  const [name, setName] = useState(authUser?.fullname || 'MR. John Doe')
   const [bio, setBio] = useState(authUser?.bio || 'Hello ! I am using Chat App')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!selectedImg) {
-      await updateProfile({ fullName: name, bio });
+      await updateProfile({ fullname: name, bio });
       navigate('/');
       return;
     }
@@ -23,7 +23,7 @@ function ProfilePage() {
     reader.readAsDataURL(selectedImg);
     reader.onload = async () => {
       const base64Image = reader.result;
-      await updateProfile({ fullName: name, bio, profilePic: base64Image });
+      await updateProfile({ fullname: name, bio, profilePic: base64Image });
       navigate('/');
     };
   }
