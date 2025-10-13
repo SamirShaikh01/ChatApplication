@@ -2,13 +2,14 @@ import mongoose from "mongoose";
 import Message from "../models/Message.js";
 import User from "../models/User.js";
 import cloudinary from "../lib/cloudinary.js";
-import { io,userSocketMap } from "../server.js"; 
+import { io, userSocketMap } from "../server.js";
 
 //get all users except the logged in user.
 export const getUserForSidebar = async (req, res) => {
     try {
         const userId = req.user._id;
         const filteredUsers = await User.find({ _id: { $ne: userId } }).select("-password");
+
 
         //Count number of messages not seen
         const unseenMessages = {}
@@ -38,8 +39,11 @@ export const getMessages = async (req, res) => {
                 { senderId: selecteduserId, ReceiverId: myId },
             ]
         })
-        await Message.updateMany({ senderId: selecteduserId, ReceiverId: myId }),
-            { seen: true };
+        await Message.updateMany(
+            { senderId: selecteduserId, ReceiverId: myId },
+            { seen: true }
+        );
+
 
         res.json({ success: true, messages })
     } catch (error) {
@@ -76,18 +80,18 @@ export const sendMessage = async (req, res) => {
 
         const newMessage = await Message.create({
             senderId,
-            receiverId,
+            ReceiverId: receiverId,
             text,
             image: imageUrl
         })
 
         // Emit the new Message to the receiver's socket 
         const receiverSocketId = userSocketMap[receiverId];
-        if(receiverSocketId){
-            io.to(receiverSocketId).emit("newMessage",newMessage)
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit("newMessage", newMessage)
         }
 
-        res.json({success:true,newMessage});
+        res.json({ success: true, newMessage });
 
 
     } catch (error) {

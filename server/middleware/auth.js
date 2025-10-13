@@ -5,11 +5,12 @@ export const protectRoute = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
+
     // ✅ Check for Bearer prefix
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
-        message: "Unauthorized: No or invalid token format",
+        message: "Unauthorized: No or invalid token format : auth.js",
       });
     }
 
