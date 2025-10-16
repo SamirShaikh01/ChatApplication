@@ -19,7 +19,7 @@ function Sidebar() {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const filteredUsers = input ? users.filter(user => user.fullName.toLowerCase().includes(input.toLowerCase())) : users;
+  const filteredUsers = input ? users.filter(user => user.fullname.toLowerCase().includes(input.toLowerCase())) : users;
 
 
   useEffect(() => {
